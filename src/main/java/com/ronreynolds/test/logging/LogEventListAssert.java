@@ -12,7 +12,7 @@ import org.slf4j.event.Level;
  <pre>
  TestLogger logger = TestLogger.getLogger("fubar");
  logger.info("foo:{}", 123);
- LogEventListAssert.assertThat(logger.getEventsAtLevel(Level.INFO))
+ LogEventListAssert.assertThat(logger, Level.INFO)
     .isNotEmpty()
     .firstLogEvent()
     .hasMessageTemplate("foo:{}")

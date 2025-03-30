@@ -58,22 +58,33 @@ public class LogEventAssert extends AbstractAssert<LogEventAssert, LogEvent> {
 
     public LogEventAssert contextMapContains(String key, String value) {
         isNotNull();
-        Assertions.assertThat(actual.getContextMap())
+        Map<String,String> contextMap = actual.getContextMap();
+        Assertions.assertThat(contextMap)
                   .withFailMessage("ContextMap is null")
                   .isNotNull();
-        String mapVal = actual.getContextMap().get(key);
+        String mapVal = contextMap.get(key);
         Assertions.assertThat(mapVal)
-                  .withFailMessage("ContextMap entry %s (%s) doesn't match %s", key, mapVal, value)
+                  .withFailMessage("ContextMap entry for key %s (%s) doesn't match value %s", key, mapVal, value)
                   .isEqualTo(value);
+        return myself;
+    }
+
+    public LogEventAssert contextMapContainsOnly(String key, String value) {
+        isNotNull();
+        Map<String,String> contextMap = actual.getContextMap();
+        Assertions.assertThat(contextMap)
+                  .isNotNull()
+                  .containsOnly(Map.entry(key, value));
         return myself;
     }
 
     public LogEventAssert contextMapContains(String key, Predicate<String> valueTest) {
         isNotNull();
-        Assertions.assertThat(actual.getContextMap())
+        Map<String,String> contextMap = actual.getContextMap();
+        Assertions.assertThat(contextMap)
                   .withFailMessage("ContextMap is null")
                   .isNotNull();
-        String mapVal = actual.getContextMap().get(key);
+        String mapVal = contextMap.get(key);
         Assertions.assertThat(mapVal)
                   .withFailMessage("ContextMap entry %s (%s) doesn't match predicate", key, mapVal)
                   .matches(valueTest);
@@ -82,27 +93,34 @@ public class LogEventAssert extends AbstractAssert<LogEventAssert, LogEvent> {
 
     public LogEventAssert contextMapContains(Map.Entry<String, String>... keyValues) {
         isNotNull();
-        Assertions.assertThat(actual.getContextMap())
-                  .withFailMessage("ContextMap mismatch; actual %s doesn't contain %s", actual.getContextMap(), Arrays.toString(keyValues))
+        Map<String,String> contextMap = actual.getContextMap();
+        Assertions.assertThat(contextMap)
+                  .withFailMessage(() -> String.format("ContextMap mismatch; actual %s doesn't contain %s", contextMap, Arrays.toString(keyValues)))
                   .contains(keyValues);
+        return myself;
+    }
+
+    public LogEventAssert contextMapContainsOnly(Map.Entry<String, String>... keyValues) {
+        isNotNull();
+        Assertions.assertThat(actual.getContextMap()).containsOnly(keyValues);
         return myself;
     }
 
     public LogEventAssert contextMapDoesNotContain(String key) {
         isNotNull();
+        Map<String,String> contextMap = actual.getContextMap();
         // a null ContextMap, by definition, doesn't contain the specified key
-        if (actual.getContextMap() != null) {
-            Assertions.assertThat(actual.getContextMap().get(key))
-                      .withFailMessage("ContextMap contains entry %s", key)
-                      .isNull();
+        if (contextMap != null) {
+            Assertions.assertThat(contextMap).doesNotContainKey(key);
         }
         return myself;
     }
 
     public LogEventAssert hasLoggerName(String loggerName) {
         isNotNull();
-        Assertions.assertThat(actual.getLoggerName())
-                  .withFailMessage("Logger mismatch; actual %s is not %s", actual.getLoggerName(), loggerName)
+        String actualLoggerName = actual.getLoggerName();
+        Assertions.assertThat(actualLoggerName)
+                  .withFailMessage("Logger name mismatch; actual '%s' is not '%s'", actualLoggerName, loggerName)
                   .isEqualTo(loggerName);
         return myself;
     }
@@ -142,8 +160,9 @@ public class LogEventAssert extends AbstractAssert<LogEventAssert, LogEvent> {
 
     public LogEventAssert hasThreadName(String name) {
         isNotNull();
-        Assertions.assertThat(actual.getThreadName())
-                  .withFailMessage("Thread name mismatch; actual %s is not %s", actual.getThreadName(), name)
+        String threadName = actual.getThreadName();
+        Assertions.assertThat(threadName)
+                  .withFailMessage("Thread name mismatch; actual '%s' is not '%s'", threadName, name)
                   .isEqualTo(name);
         return myself;
     }

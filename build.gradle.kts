@@ -4,7 +4,7 @@ plugins {
 }
 
 group 	                = "com.ronreynolds"
-version                 = "1.0.0"
+version                 = "1.0.1"
 
 val assertJVersion      = "3.27.3"		// 2025-01-18
 val jUnitJupiterVersion = "5.12.0"      // 2025-02-21
@@ -21,9 +21,8 @@ repositories {
 }
 
 dependencies {
-	implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    implementation("org.assertj:assertj-core:$assertJVersion")
-
+	implementation    ("org.slf4j:slf4j-api:$slf4jVersion")
+    implementation    ("org.assertj:assertj-core:$assertJVersion")
 	testImplementation("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
 	testRuntimeOnly   ("org.junit.platform:junit-platform-launcher")
 }

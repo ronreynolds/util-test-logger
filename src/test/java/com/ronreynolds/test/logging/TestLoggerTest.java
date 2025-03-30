@@ -2,6 +2,7 @@ package com.ronreynolds.test.logging;
 
 import static com.ronreynolds.test.logging.LogEventListAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.ronreynolds.util.classes.ClassInfo;
 import java.lang.reflect.Field;
@@ -69,7 +70,7 @@ class TestLoggerTest {
             log.clearEventsAtLevel(Level.INFO);
 
             Throwable t = new Throwable();
-            Marker marker = new BasicMarkerFactory().getMarker("fred");
+            Marker marker = new BasicMarkerFactory().getDetachedMarker("fred");
             log.trace("trace message");
             logCountAssert.hasValue(2);
             log.debug("debug message");
@@ -90,15 +91,39 @@ class TestLoggerTest {
                                        .hasMarker(marker);
 
             // has basically everything
-            assertThat(log, Level.ERROR).hasSize(1).firstLogEvent().isLevel(Level.ERROR).hasFormattedMessage("error message - 1 2")
-                                        .hasMessageTemplate("error message - {} {}")
-                                        .containsMessageArgs(1, 2)
-                                        .hasMarker(marker)
-                                        .hasThrown(t)
-                                        .hasThreadName(Thread.currentThread().getName())
-                                        .hasLoggerName(LOGGER_NAME)
-                                        .contextMapContains("foo", "bar")
+            var logEventListAssert = assertThat(log, Level.ERROR);
+            logEventListAssert.hasSize(1);
+            var logEventAssert = logEventListAssert.firstLogEvent();
+            assertThat(logEventListAssert.lastLogEvent()).isNotNull();
+            assertThat(logEventListAssert.logElement(0)).isNotNull();
+            logEventAssert.isLevel(Level.ERROR)
+                          .hasFormattedMessage("error message - 1 2")
+                          .hasMessageTemplate("error message - {} {}")
+                          .containsMessageArgs(1, 2)
+                          .messageArgsMatch(args -> args.length == 2 && args[0] == Integer.valueOf(1) && args[1] == Integer.valueOf(2))
+                          .hasMarker(marker)
+                          .hasThrown(t)
+                          .hasThreadName(Thread.currentThread().getName())
+                          .hasLoggerName(LOGGER_NAME)
+                          .contextMapContainsOnly("foo", "bar")
+                          .contextMapContains("foo", "bar")
+                          .contextMapContains("foo", "bar"::equals)
+                          .contextMapContains(Map.entry("foo", "bar"))
             ;
+
+            // test failure cases
+            assertThrows(AssertionError.class, () -> logEventAssert.isLevel(Level.INFO));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasFormattedMessage(null));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasMessageTemplate(null));
+            assertThrows(AssertionError.class, () -> logEventAssert.containsMessageArgs(42));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasMarker(null));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasThrown(null));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasThreadName("foo"));
+            assertThrows(AssertionError.class, () -> logEventAssert.hasLoggerName("bar"));
+            assertThrows(AssertionError.class, () -> logEventAssert.contextMapContains("fuzzy", "wuzzy"));
+            assertThrows(AssertionError.class, () -> logEventAssert.contextMapDoesNotContain("foo"));
+            assertThrows(AssertionError.class, () -> logEventAssert.contextMapContainsOnly(Map.entry("foo", "bar"),
+                                                                                           Map.entry("fuzzy", "wuzzy")));
         }
         // verify that resetOnClose.close() worked
         assertThat(log.getLogLevel()).isSameAs(startingLevel);
