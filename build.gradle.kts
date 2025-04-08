@@ -4,7 +4,7 @@ plugins {
 }
 
 group 	                = "com.ronreynolds"
-version                 = "1.0.2"
+version                 = "1.0.3-SNAPSHOT"
 
 val assertJVersion      = "3.27.3"		// 2025-01-18
 val jUnitJupiterVersion = "5.12.0"      // 2025-02-21
