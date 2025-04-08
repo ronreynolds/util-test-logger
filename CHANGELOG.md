@@ -5,6 +5,12 @@
     * prefixes: fix, feature, build, test, chore, perf, docs, style, refactor, revert, ci, logs
     * scope is optional; describes the package/area/file of the change
 
+## 1.0.3 - unreleased
+### ToDo
+* consider including `org.slf4j.impl.StaticLoggerBinder` and `StaticMDCBinder` so this library can be detected as a slf4j provider
+    * also look into SLF4J-2+ service-provider mechanism
+    * will cause test-logger to try to be THE slf4j implementation; might run afoul of libs like logback, log4j2, or slf4j-simple
+
 ## 1.0.2 - 2025-04-08
 ### Added
 * `LogEventAssert.messageArgsHasSize(int)` and `messageArgIsEqualTo(int, T)`
@@ -14,10 +20,6 @@ to return our derived type
 ### Removed
 * most methods of `LogEventListAssert` because new base class resolves all return-type issues. :party:
 * made `ClassInfo` private because it's not part of logging per-se and, thus, clutters up the library a little bit
-### ToDo
-* consider including `org.slf4j.impl.StaticLoggerBinder` and `StaticMDCBinder` so this library can be detected as a slf4j provider
-  * also look into SLF4J-2+ service-provider mechanism
-  * will cause test-logger to try to be THE slf4j implementation; might run afoul of libs like logback, log4j2, or slf4j-simple
 
 ## 1.0.1 - 2025-03-30
 ### Added
