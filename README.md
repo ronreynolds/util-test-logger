@@ -1,6 +1,11 @@
 # util-test-logger
 an slf4j impl useful for testing logging
 
+## Gradle usage
+```kotlin
+    testImplementation  ("com.ronreynolds:util-test-logger:1.0.2")
+```
+
 ## TestLogger
 ### public methods
 #### static methods
