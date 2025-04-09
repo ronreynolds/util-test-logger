@@ -1,15 +1,14 @@
 # util-test-logger changelog
 * based on https://keepachangelog.com/en/1.0.0/, https://semver.org/, https://www.conventionalcommits.org/en/v1.0.0/
 * sections: **Breaking** **Added** **Changed** **Deprecated** **Fixed** **Removed** **Security** **ToDo** (in that order)
-* commit messages: `<type>(<scope>): <description>`
-    * prefixes: fix, feature, build, test, chore, perf, docs, style, refactor, revert, ci, logs
-    * scope is optional; describes the package/area/file of the change
+* commit messages: `<type>[(<scope>)]: <description>`
+  * prefixes: fix, feature, build, test, chore, perf, docs, style, refactor, revert, ci, logs
 
 ## 1.0.3 - unreleased
 ### ToDo
 * consider including `org.slf4j.impl.StaticLoggerBinder` and `StaticMDCBinder` so this library can be detected as a slf4j provider
-    * also look into SLF4J-2+ service-provider mechanism
-    * will cause test-logger to try to be THE slf4j implementation; might run afoul of libs like logback, log4j2, or slf4j-simple
+  * also look into SLF4J-2+ service-provider mechanism
+  * will cause test-logger to try to be THE slf4j implementation; might run afoul of libs like logback, log4j2, or slf4j-simple
 
 ## 1.0.2 - 2025-04-08
 ### Added
